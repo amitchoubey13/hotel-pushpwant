@@ -958,31 +958,7 @@ G("saveSettings").addEventListener("click",function(){
 });
 G("clearAll").addEventListener("click",function(e){twoTap(e.target,function(){S.bookings=[];S.tx=[];S.staff=[];S.attendance=[];S.settings.nextBill=1;save();renderAll();toast("All data cleared");});});
 
-G("testSyncBtn").addEventListener("click",async function(){
-  var url=G("s_syncurl").value.trim(),key=G("s_binkey").value.trim();
-  var res=G("testSyncResult"),dbg=G("syncDebug");
-  if(!url){res.textContent="Paste Bin URL first";res.style.color="var(--wn)";return;}
-  res.textContent="Testing...";res.style.color="var(--mu)";
-  dbg.style.display="block";
-  dbg.textContent="URL: "+url+"\nKey: "+(key?"present ("+key.length+" chars)":"MISSING");
-  try{
-    var hdrs={"Content-Type":"application/json"};if(key)hdrs["X-Access-Key"]=key;
-    var r=await fetch(url,{headers:hdrs});
-    var txt=await r.text();
-    dbg.textContent+="\nHTTP: "+r.status;
-    dbg.textContent+="\nReply: "+txt.slice(0,100);
-    var d;try{d=JSON.parse(txt);}catch(e2){d=null;}
-    if(r.ok&&d){
-      res.textContent="Connected!";res.style.color="var(--ok)";
-      dbg.textContent+="\nSUCCESS - will sync on all devices";
-      var su=window.location.href.split("#")[0]+"#sync="+encodeURIComponent(url)+"|"+encodeURIComponent(key);
-      G("mobileSetupUrl").textContent=su;G("mobileSetupBox").style.display="block";
-    }else{
-      res.textContent="Error HTTP "+r.status;res.style.color="var(--er)";
-      dbg.textContent+="\nFAILED"+(r.status===401?" - Wrong Access Key":r.status===404?" - Wrong URL":"");
-    }
-  }catch(e){res.textContent="Network error";res.style.color="var(--er)";dbg.textContent+="\nErr: "+e.message;}
-});
+G("testSyncBtn").addEventListener("click",function(){var url=G("s_syncurl").value.trim(),key=G("s_binkey").value.trim();var res=G("testSyncResult"),dbg=G("syncDebug");dbg.style.display="block";dbg.textContent="";res.textContent="";var nl="\n";function log(t){dbg.textContent+=t+nl;}function fail(t){res.textContent=t;res.style.color="var(--er)";}function win(t){res.textContent=t;res.style.color="var(--ok)";}if(!url){fail("Paste Bin URL first");return;}url=url.replace(/[/]+$/,"");if(url.indexOf("api.jsonbin.io/v3/b/")<0){fail("Wrong URL format");log("Must be: https://api.jsonbin.io/v3/b/YOUR_BIN_ID");log("You entered: "+url);return;}var binId=(url.split("/v3/b/")[1]||"").replace("/latest","");if(binId.length<10){fail("Bin ID too short");log("ID found: "+binId);return;}log("Bin ID OK: "+binId);if(!key){fail("Paste Master Key");log("jsonbin.io > Account icon > Account Settings > Master Key > Copy");return;}if(key.indexOf("$2")<0&&key.length<20){fail("Key looks wrong - too short or wrong format");log("You entered: "+key.slice(0,10)+" ("+key.length+" chars)");log("Master Key should be ~60 chars starting with $2a$ or $2b$");return;}log("Key OK: "+key.slice(0,6)+"...("+key.length+" chars)");res.textContent="Connecting...";res.style.color="var(--mu)";var readUrl="https://api.jsonbin.io/v3/b/"+binId+"/latest";log("Calling: "+readUrl);fetch(readUrl,{method:"GET",headers:{"X-Master-Key":key,"X-Bin-Meta":"false"}}).then(function(r){log("HTTP: "+r.status+" "+r.statusText);r.text().then(function(txt){log("Response: "+txt.slice(0,120));if(r.status===200){win("Connected! All devices will sync.");log("SUCCESS!");G("s_syncurl").value="https://api.jsonbin.io/v3/b/"+binId;var su=window.location.href.split("#")[0]+"#sync="+encodeURIComponent("https://api.jsonbin.io/v3/b/"+binId)+"|"+encodeURIComponent(key);G("mobileSetupUrl").textContent=su;G("mobileSetupBox").style.display="block";}else if(r.status===401){fail("Wrong Master Key (401)");log("Fix: jsonbin.io > Account icon > Account Settings > Master Key > COPY");}else if(r.status===403){fail("Access Denied (403)");log("Use Master Key not Access Key");}else if(r.status===404){fail("Bin not found (404)");log("Check Bin ID: "+binId);}else{fail("Error HTTP "+r.status);}});}).catch(function(e){fail("Network Error: "+e.message);log("Check internet and try again");});});
 G("copyUrlBtn").addEventListener("click",function(){
   var url=G("mobileSetupUrl").textContent;
   if(navigator.clipboard)navigator.clipboard.writeText(url).then(function(){toast("Link copied! Open on mobile");}).catch(function(){});
@@ -1000,7 +976,7 @@ async function cloudPush(){
   _pushing=true;setSyncUI("pushing");
   var url=S.settings.syncUrl,key=S.settings.binKey||"",body=JSON.stringify(S);
   try{
-    var hdrs={"Content-Type":"application/json"};if(key)hdrs["X-Access-Key"]=key;
+    var hdrs={"Content-Type":"application/json","X-Master-Key":key};
     var r=await fetch(url,{method:"PUT",headers:hdrs,body:body});
     var txt=await r.text();
     if(r.ok)setSyncUI("ok");else setSyncUI("err");
@@ -1012,8 +988,8 @@ async function cloudPull(){
   setSyncUI("pulling");
   var url=S.settings.syncUrl,key=S.settings.binKey||"";
   try{
-    var hdrs={};if(key)hdrs["X-Access-Key"]=key;
-    var r=await fetch(url,{headers:hdrs});
+    var hdrs={"X-Master-Key":key,"X-Bin-Meta":"false"};
+    var r=await fetch(url+"/latest",{headers:hdrs});
     var j=await r.json();
     var d=j.record||j;
     if(d&&d.updatedAt&&d.updatedAt>(S.updatedAt||0)){
