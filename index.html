@@ -367,11 +367,19 @@ body[data-role="manager"] .owner-only{display:none!important}
       <button class="btn btn-ghost btn-sm" id="testSyncBtn">ߔ Test Connection</button>
       <span id="testSyncResult" style="font-size:12px;padding:6px 0;color:var(--muted)"></span>
     </div>
-    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:12.5px;line-height:1.8;color:#1E40AF">
-      <b>ߓ Setup in 3 steps:</b><br>
-      1. Go to <b>script.google.com</b> → New project → paste the Apps Script code<br>
-      2. Deploy → New Deployment → Web App → Execute as <b>Me</b> → Anyone → Copy URL<br>
-      3. Paste URL above → Save Settings → Green dot = all devices synced ✓
+    <div class="field" style="margin-top:10px">
+      <label>JSONBin Access Key (if using JSONBin)</label>
+      <input id="s_binkey" placeholder="$2b$10$… (from jsonbin.io → Account → Access Keys)">
+    </div>
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:12px 14px;margin-top:10px;font-size:12.5px;line-height:1.9;color:#1E40AF">
+      <b>ߓ Recommended: JSONBin.io (works on ALL devices including mobile)</b><br>
+      1. Go to <b>jsonbin.io</b> → Sign up free → Login<br>
+      2. Click <b>Bins → Create New Bin</b> → paste <code>{}</code> → Create<br>
+      3. Copy the <b>Bin URL</b> (like <code>https://api.jsonbin.io/v3/b/XXXXX</code>) → paste above<br>
+      4. Go to <b>Account → Access Keys → Create Key</b> → copy it → paste in Access Key field<br>
+      5. Save Settings → Test Connection → Green dot ✓<br><br>
+      <b>OR: Google Apps Script (desktop only, mobile may not work)</b><br>
+      script.google.com → New project → paste google-apps-script.gs → Deploy as Web App → copy URL
     </div>
   </div>
   <div class="card">
@@ -446,7 +454,8 @@ const DEF = {
     pins:{owner:"1234",manager:"2345",reception:"3456",staff:"4567"},
     breakfast:["Poha - पोहा","Upma - उपमा","Aloo Paratha - आलू पराठा","Bread Butter - ब्रेड बटर","Tea - चाय","Coffee - कॉफ़ी"],
     cats:["Groceries / किराना","Vegetables / सब्ज़ी","Milk & Dairy","Gas / गैस","Electricity / बिजली","Water / पानी","Staff Salary / वेतन","Laundry / धुलाई","Repairs / मरम्मत","Room Supplies / सामान","Marketing","Other / अन्य"],
-    syncUrl:""
+    syncUrl:"",
+    binKey:""
   },
   bookings:[], tx:[], staff:[], attendance:[], updatedAt:0
 };
@@ -469,6 +478,7 @@ function load(){
       S.updatedAt= d.updatedAt || 0;
       S.settings = Object.assign(deepCopy(DEF.settings), d.settings || {});
       S.settings.pins = Object.assign(deepCopy(DEF.settings.pins), (d.settings||{}).pins || {});
+      S.settings.binKey = (d.settings||{}).binKey||"";
       S.staff = d.staff || [];
       S.attendance = d.attendance || [];
     }
@@ -1063,6 +1073,7 @@ function fillSettings(){
   G("s_name").value=s.hotelName;G("s_phone").value=s.phone;G("s_addr").value=s.addr;G("s_gstin").value=s.gstin;G("s_billno").value=s.nextBill;
   G("s_pin_owner").value=s.pins.owner;G("s_pin_manager").value=s.pins.manager;G("s_pin_reception").value=s.pins.reception;G("s_pin_staff").value=s.pins.staff;
   G("s_syncurl").value=s.syncUrl||"";
+  if(G("s_binkey")) G("s_binkey").value=s.binKey||"";
   G("s_breakfast").value=s.breakfast.join("\n");
 }
 G("testSyncBtn").addEventListener("click", async()=>{
@@ -1086,6 +1097,7 @@ G("saveSettings").addEventListener("click",()=>{
   s.nextBill=Math.max(1,num(G("s_billno").value));
   ["owner","manager","reception","staff"].forEach(r=>{ const v=G("s_pin_"+r).value.trim(); if(/^\d{4}$/.test(v))s.pins[r]=v; });
   s.syncUrl=G("s_syncurl").value.trim();
+  s.binKey=G("s_binkey").value.trim();
   s.breakfast=G("s_breakfast").value.split("\n").map(x=>x.trim()).filter(Boolean);
   save();toast("Settings saved ✓");cloudStart();
 });
@@ -1096,76 +1108,98 @@ let pollT=null;
 let _pushing=false;
 
 function setSyncUI(state){
-  // state: "ok" | "pushing" | "pulling" | "err" | "off"
   const dot=G("syncDot"), lbl=G("syncLbl");
   const cfg={
-    ok:    {bg:"#4CAF50", text:"synced ✓"},
-    pushing:{bg:"#FF9800",text:"saving…"},
-    pulling:{bg:"#2196F3",text:"updating…"},
-    err:   {bg:"#F44336",text:"sync error ✗"},
-    off:   {bg:"#888",   text:"local only"},
+    ok:     {bg:"#4CAF50", text:"synced ✓"},
+    pushing:{bg:"#FF9800", text:"saving…"},
+    pulling:{bg:"#2196F3", text:"updating…"},
+    err:    {bg:"#F44336", text:"sync error ✗"},
+    off:    {bg:"#888",   text:"local only"},
   }[state]||{bg:"#888",text:state};
   if(dot) dot.style.background=cfg.bg;
   if(lbl) lbl.textContent=cfg.text;
 }
 
+/* ── SYNC ENGINE ──────────────────────────────────────────
+   Supports three backends (auto-detected from URL format):
+   1. JSONBin.io  — recommended, works on all devices
+   2. Google Apps Script — works on desktop only (CORS issues on mobile)
+   3. Custom REST API
+   ─────────────────────────────────────────────────────── */
+
+function isBin(url){ return url && url.includes("jsonbin.io"); }
+function isGAS(url){ return url && url.includes("script.google.com"); }
+
 async function cloudPush(){
   if(!S.settings.syncUrl || _pushing) return;
-  _pushing=true;
-  setSyncUI("pushing");
+  _pushing=true; setSyncUI("pushing");
+  const url = S.settings.syncUrl;
+  const body = JSON.stringify(S);
   try{
-    const body=JSON.stringify(S);
-    // Use no-cors for POST — GAS redirects mean cors fails on mobile
-    // We fire-and-forget; pull confirms it saved
-    await fetch(S.settings.syncUrl, {
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"text/plain"},
-      body
-    });
-    setSyncUI("ok");
-  }catch(e){
-    setSyncUI("err");
-  }
+    if(isBin(url)){
+      // JSONBin PUT — works on all devices, true CORS
+      const r = await fetch(url, {
+        method:"PUT",
+        headers:{"Content-Type":"application/json","X-Access-Key":S.settings.binKey||""},
+        body
+      });
+      await r.json();
+      setSyncUI("ok");
+    } else if(isGAS(url)){
+      // GAS — use no-cors POST (fire and forget)
+      fetch(url, {method:"POST", mode:"no-cors", body});
+      await new Promise(r=>setTimeout(r,1500)); // wait for GAS to process
+      setSyncUI("ok");
+    } else {
+      // Generic REST
+      await fetch(url, {method:"POST", headers:{"Content-Type":"application/json"}, body});
+      setSyncUI("ok");
+    }
+  }catch(e){ setSyncUI("err"); console.warn("push err",e); }
   _pushing=false;
-  // Pull shortly after to confirm data arrived
-  setTimeout(cloudPull, 2000);
 }
 
 async function cloudPull(){
   if(!S.settings.syncUrl) return;
   setSyncUI("pulling");
+  const url = S.settings.syncUrl;
   try{
-    // Simple fetch — no mode:"cors" header needed for GET on GAS
-    const r=await fetch(S.settings.syncUrl+"?t="+Date.now());
-    const d=await r.json();
+    let d;
+    if(isBin(url)){
+      const r = await fetch(url, {
+        headers:{"X-Access-Key":S.settings.binKey||""}
+      });
+      const j = await r.json();
+      d = j.record || j; // JSONBin wraps in {record:{...}}
+    } else {
+      const r = await fetch(url+"?t="+Date.now());
+      d = await r.json();
+    }
     if(d && d.updatedAt && d.updatedAt > (S.updatedAt||0)){
-      const keepUrl=S.settings.syncUrl;
-      S=deepCopy(DEF);
-      S.bookings    = d.bookings    || [];
-      S.tx          = d.tx          || [];
-      S.staff       = d.staff       || [];
-      S.attendance  = d.attendance  || [];
-      S.updatedAt   = d.updatedAt;
-      S.settings    = Object.assign(deepCopy(DEF.settings), d.settings||{});
+      const keepUrl = S.settings.syncUrl;
+      const keepKey = S.settings.binKey||"";
+      S = deepCopy(DEF);
+      S.bookings   = d.bookings   || [];
+      S.tx         = d.tx         || [];
+      S.staff      = d.staff      || [];
+      S.attendance = d.attendance || [];
+      S.updatedAt  = d.updatedAt;
+      S.settings   = Object.assign(deepCopy(DEF.settings), d.settings||{});
       S.settings.syncUrl = keepUrl;
+      S.settings.binKey  = keepKey;
       S.settings.pins    = Object.assign(deepCopy(DEF.settings.pins),(d.settings||{}).pins||{});
-      save(false);
-      renderAll();
+      save(false); renderAll();
       toast("ߔ Data updated from cloud");
     }
     setSyncUI("ok");
-  }catch(e){
-    setSyncUI("err");
-  }
+  }catch(e){ setSyncUI("err"); console.warn("pull err",e); }
 }
 
 function cloudStart(){
   clearInterval(pollT);
   if(!S.settings.syncUrl){ setSyncUI("off"); return; }
-  setSyncUI("pulling");
   cloudPull();
-  pollT=setInterval(cloudPull, 8000); // pull every 8 seconds
+  pollT=setInterval(cloudPull, 8000);
 }
 
 // push immediately on every save
