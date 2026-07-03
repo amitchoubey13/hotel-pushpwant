@@ -185,7 +185,7 @@ body[data-role="manager"] .owner-only{display:none!important}
       <input class="pinbox" id="p3" type="tel" maxlength="1" inputmode="numeric">
     </div>
     <div class="lerr" id="loginErr"></div>
-    <button class="lbtn" id="loginBtn">ߔ Login / लॉगिन</button>
+    <button class="lbtn" id="loginBtn">🔐 Login / लॉगिन</button>
     <div class="lhint">
       <b>Default PINs / डिफ़ॉल्ट पिन:</b><br>
       Owner: <b>1234</b> &nbsp;·&nbsp; Manager: <b>2345</b><br>
@@ -207,10 +207,10 @@ body[data-role="manager"] .owner-only{display:none!important}
     <button id="logoutBtn">Logout</button>
   </div>
   <nav>
-    <button class="tab active" data-tab="booking">ߓ Booking</button>
-    <button class="tab mgr-up" data-tab="finance">ߒ Finance</button>
-    <button class="tab" data-tab="contacts">ߓ Contacts</button>
-    <button class="tab mgr-up" data-tab="attendance">ߕ Attendance</button>
+    <button class="tab active" data-tab="booking">📋 Booking</button>
+    <button class="tab mgr-up" data-tab="finance">💰 Finance</button>
+    <button class="tab" data-tab="contacts">📱 Contacts</button>
+    <button class="tab mgr-up" data-tab="attendance">🕐 Attendance</button>
     <button class="tab owner-only" data-tab="settings">⚙ Settings</button>
   </nav>
 </header>
@@ -220,7 +220,7 @@ body[data-role="manager"] .owner-only{display:none!important}
 <section id="tab-booking">
   <div class="card act-el">
     <h3>➕ New Check-In / नया चेक-इन
-      <button class="btn btn-ghost btn-sm" id="toggleWA" style="margin-left:auto">ߓ Paste WhatsApp</button>
+      <button class="btn btn-ghost btn-sm" id="toggleWA" style="margin-left:auto">📋 Paste WhatsApp</button>
     </h3>
     <div id="waBox" class="hidden" style="margin-bottom:10px">
       <label>Paste guest WhatsApp message / व्हाट्सएप मैसेज</label>
@@ -256,7 +256,7 @@ body[data-role="manager"] .owner-only{display:none!important}
     <button class="btn btn-p w100" id="addBooking" style="margin-top:12px">✓ Check-In Guest / चेक-इन</button>
   </div>
   <div class="toolrow">
-    <input type="search" id="bkSearch" placeholder="ߔ Search name / mobile / bill / room…">
+    <input type="search" id="bkSearch" placeholder="🔍 Search name / mobile / bill / room…">
     <select id="bkFilter" style="width:auto"><option value="all">All</option><option value="in">Checked-In</option><option value="out">Checked-Out</option></select>
     <button class="btn btn-ghost btn-sm mgr-up" id="bkExport">⬇ CSV</button>
   </div>
@@ -291,13 +291,13 @@ body[data-role="manager"] .owner-only{display:none!important}
       </div>
     </div>
   </div>
-  <div class="card"><h3>ߓ By Category</h3><div id="catBars"></div></div>
-  <div class="card"><h3>ߓ Transactions</h3><div id="txList"></div></div>
+  <div class="card"><h3>📊 By Category</h3><div id="catBars"></div></div>
+  <div class="card"><h3>📒 Transactions</h3><div id="txList"></div></div>
 </section>
 
 <!-- CONTACTS TAB -->
 <section id="tab-contacts" class="hidden">
-  <div class="toolrow"><input type="search" id="ctSearch" placeholder="ߔ Search contacts…"></div>
+  <div class="toolrow"><input type="search" id="ctSearch" placeholder="🔍 Search contacts…"></div>
   <div class="card"><div id="ctList"></div></div>
 </section>
 
@@ -305,7 +305,7 @@ body[data-role="manager"] .owner-only{display:none!important}
 <!-- ATTENDANCE TAB -->
 <section id="tab-attendance" class="hidden">
   <div class="card">
-    <h3>ߕ Mark Attendance / उपस्थिति
+    <h3>🕐 Mark Attendance / उपस्थिति
       <button class="btn btn-ghost btn-sm" id="addStaffBtn" style="margin-left:auto owner-only">+ Add Staff</button>
     </h3>
     <div id="addStaffForm" class="hidden g2" style="margin-bottom:12px;background:#F4F1E6;padding:10px;border-radius:8px;gap:8px">
@@ -320,12 +320,12 @@ body[data-role="manager"] .owner-only{display:none!important}
     </div>
     <div class="toolrow">
       <input type="date" id="att_date" style="width:auto">
-      <input type="search" id="attSearch" placeholder="ߔ Search staff…" style="flex:1">
+      <input type="search" id="attSearch" placeholder="🔍 Search staff…" style="flex:1">
     </div>
     <div id="attList"></div>
   </div>
   <div class="card">
-    <h3>ߓ Monthly Summary / मासिक सारांश</h3>
+    <h3>📊 Monthly Summary / मासिक सारांश</h3>
     <div class="toolrow">
       <input type="month" id="att_month" style="width:auto">
       <button class="btn btn-ghost btn-sm" id="attExport">⬇ CSV</button>
@@ -333,15 +333,45 @@ body[data-role="manager"] .owner-only{display:none!important}
     <div id="attSummary"></div>
   </div>
   <div class="card mgr-up">
-    <h3>ߑ Staff List / स्टाफ</h3>
+    <h3>👥 Staff List / स्टाफ</h3>
     <div id="staffList"></div>
   </div>
 </section>
 
 <!-- SETTINGS TAB -->
 <section id="tab-settings" class="hidden">
+
+  <!-- ① CLOUD SYNC — most important, show first -->
+  <div class="card" style="border:2px solid var(--gold);background:linear-gradient(135deg,#FFFDF5,#FFF8E7)">
+    <h3 style="font-size:17px">☁ Cloud Sync — All Devices / सभी डिवाइस</h3>
+    <div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:#1B5E20;line-height:1.8">
+      ✅ <b>JSONBin.io — works on mobile + desktop both</b><br>
+      1. Go to <b>jsonbin.io</b> → Sign up free → Login<br>
+      2. Click <b>Bins → + CREATE BIN</b> → type <code style="background:#fff;padding:1px 5px;border-radius:3px;font-size:12px">{}</code> in editor → click CREATE BIN<br>
+      3. Copy the Bin URL (like <code style="background:#fff;padding:1px 5px;border-radius:3px;font-size:12px">https://api.jsonbin.io/v3/b/XXXXXX</code>)<br>
+      4. Account icon (top right) → <b>Account Settings → Access Keys → + CREATE ACCESS KEY</b><br>
+      5. Any name → Create → copy the long key → paste below<br>
+      6. Save Settings → Test Connection → Green dot ✅
+    </div>
+    <div class="g2">
+      <div class="field">
+        <label style="font-size:13px;font-weight:800;color:var(--blue)">① Bin URL / बिन URL *</label>
+        <input id="s_syncurl" placeholder="https://api.jsonbin.io/v3/b/XXXXXX" style="border:2px solid var(--gold)">
+      </div>
+      <div class="field">
+        <label style="font-size:13px;font-weight:800;color:var(--blue)">② Access Key / एक्सेस की *</label>
+        <input id="s_binkey" placeholder="$2b$10$AbCdEfGh…" style="border:2px solid var(--gold)">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-p btn-sm" id="testSyncBtn">🔗 Test Connection / जांचें</button>
+      <span id="testSyncResult" style="font-size:13px;font-weight:600"></span>
+    </div>
+  </div>
+
+  <!-- ② HOTEL DETAILS -->
   <div class="card">
-    <h3>ߏ Hotel Details (Bill)</h3>
+    <h3>🏨 Hotel Details (Bill / बिल के लिए)</h3>
     <div class="g2">
       <div class="field"><label>Hotel Name</label><input id="s_name"></div>
       <div class="field"><label>Phone</label><input id="s_phone"></div>
@@ -350,51 +380,37 @@ body[data-role="manager"] .owner-only{display:none!important}
       <div class="field"><label>Next Bill No.</label><input id="s_billno" type="number" min="1"></div>
     </div>
   </div>
+
+  <!-- ③ PINs -->
   <div class="card">
-    <h3>ߔ PINs (4 digits)</h3>
+    <h3>🔑 Login PINs (4 digits)</h3>
     <div class="g4">
-      <div class="field"><label>Owner</label><input id="s_pin_owner" maxlength="4" type="tel"></div>
-      <div class="field"><label>Manager</label><input id="s_pin_manager" maxlength="4" type="tel"></div>
-      <div class="field"><label>Reception</label><input id="s_pin_reception" maxlength="4" type="tel"></div>
-      <div class="field"><label>Staff</label><input id="s_pin_staff" maxlength="4" type="tel"></div>
+      <div class="field"><label>Owner / मालिक</label><input id="s_pin_owner" maxlength="4" type="tel"></div>
+      <div class="field"><label>Manager / मैनेजर</label><input id="s_pin_manager" maxlength="4" type="tel"></div>
+      <div class="field"><label>Reception / रिसेप्शन</label><input id="s_pin_reception" maxlength="4" type="tel"></div>
+      <div class="field"><label>Staff / स्टाफ</label><input id="s_pin_staff" maxlength="4" type="tel"></div>
     </div>
   </div>
+
+  <!-- ④ BREAKFAST -->
   <div class="card">
-    <h3>☁ Google Sheets Sync (Free)</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:6px">Paste Apps Script URL for cross-device sync. See SETUP-GUIDE.md</p>
-    <input id="s_syncurl" placeholder="https://script.google.com/macros/s/…/exec">
-    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" id="testSyncBtn">ߔ Test Connection</button>
-      <span id="testSyncResult" style="font-size:12px;padding:6px 0;color:var(--muted)"></span>
-    </div>
-    <div class="field" style="margin-top:10px">
-      <label>JSONBin Access Key (if using JSONBin)</label>
-      <input id="s_binkey" placeholder="$2b$10$… (from jsonbin.io → Account → Access Keys)">
-    </div>
-    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:12px 14px;margin-top:10px;font-size:12.5px;line-height:1.9;color:#1E40AF">
-      <b>ߓ Recommended: JSONBin.io (works on ALL devices including mobile)</b><br>
-      1. Go to <b>jsonbin.io</b> → Sign up free → Login<br>
-      2. Click <b>Bins → Create New Bin</b> → paste <code>{}</code> → Create<br>
-      3. Copy the <b>Bin URL</b> (like <code>https://api.jsonbin.io/v3/b/XXXXX</code>) → paste above<br>
-      4. Go to <b>Account → Access Keys → Create Key</b> → copy it → paste in Access Key field<br>
-      5. Save Settings → Test Connection → Green dot ✓<br><br>
-      <b>OR: Google Apps Script (desktop only, mobile may not work)</b><br>
-      script.google.com → New project → paste google-apps-script.gs → Deploy as Web App → copy URL
-    </div>
-  </div>
-  <div class="card">
-    <h3>ߍ Complimentary Breakfast Menu</h3>
+    <h3>🍽 Complimentary Breakfast Menu</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px">One item per line</div>
     <textarea id="s_breakfast" rows="5"></textarea>
   </div>
+
+  <!-- ⑤ DATA -->
   <div class="card">
-    <h3>ߗ Data</h3>
+    <h3>🗂 Data / डेटा</h3>
     <div class="toolrow" style="margin:0">
       <button class="btn btn-ghost btn-sm" id="importCsvBtn">⬆ Import CSV</button>
       <input type="file" id="importCsvFile" accept=".csv" class="hidden">
-      <button class="btn btn-danger btn-sm" id="clearAll">ߗ Clear All Data</button>
+      <button class="btn btn-danger btn-sm" id="clearAll">🗑 Clear All Data</button>
     </div>
   </div>
-  <button class="btn btn-p w100" id="saveSettings" style="margin-top:4px">ߒ Save Settings</button>
+
+  <button class="btn btn-p w100" id="saveSettings" style="margin-top:4px">💾 Save Settings / सेटिंग सेव करें</button>
+
 </section>
 
 </main>
@@ -422,9 +438,9 @@ body[data-role="manager"] .owner-only{display:none!important}
       <div class="field" style="margin-bottom:16px">
         <label>Payment Mode / भुगतान विधि</label>
         <div style="display:flex;gap:8px">
-          <button class="co-mode-btn btn btn-ghost" data-mode="Cash" style="flex:1">ߒ Cash</button>
-          <button class="co-mode-btn btn btn-ghost" data-mode="UPI" style="flex:1">ߓ UPI</button>
-          <button class="co-mode-btn btn btn-ghost" data-mode="Card" style="flex:1">ߒ Card</button>
+          <button class="co-mode-btn btn btn-ghost" data-mode="Cash" style="flex:1">💵 Cash</button>
+          <button class="co-mode-btn btn btn-ghost" data-mode="UPI" style="flex:1">📱 UPI</button>
+          <button class="co-mode-btn btn btn-ghost" data-mode="Card" style="flex:1">💳 Card</button>
         </div>
       </div>
       <div style="display:flex;gap:10px">
@@ -552,7 +568,7 @@ function doLogin(){
     G("userRoleLbl").textContent = selRole.charAt(0).toUpperCase()+selRole.slice(1);
     renderAll();
     cloudStart();
-    toast("Welcome / स्वागत है ߙ");
+    toast("Welcome / स्वागत है 🙏");
   } else {
     G("loginErr").textContent = "Wrong PIN / गलत पिन ✗";
     clearPins();
@@ -669,15 +685,15 @@ function renderBookings(){
         <div style="text-align:right"><div class="bkamt">${inr(t.grand)}</div>${payBadge(b)}</div>
       </div>
       <div class="bkmeta">
-        ߓ ${esc(b.mobile||"—")} · ${fD(b.inDate)} ${b.inTime||""} · ${b.nights} night(s) · ${b.adults}A ${b.children}C
-        ${b.company?`<br>ߏ <b>${esc(b.company)}</b>`:""}${b.gstNo?` · GSTIN: ${esc(b.gstNo)}`:""}
-        ${b.otherGuests?`<br>ߑ ${esc(b.otherGuests.split("\n").filter(Boolean).join(", "))}`:""}
-        ${t.foodT?` · ߍ Food ${inr(t.foodT)}`:""}${b.bfast&&b.bfast.length?" · ☕ Compl.":""}
+        📱 ${esc(b.mobile||"—")} · ${fD(b.inDate)} ${b.inTime||""} · ${b.nights} night(s) · ${b.adults}A ${b.children}C
+        ${b.company?`<br>🏢 <b>${esc(b.company)}</b>`:""}${b.gstNo?` · GSTIN: ${esc(b.gstNo)}`:""}
+        ${b.otherGuests?`<br>👥 ${esc(b.otherGuests.split("\n").filter(Boolean).join(", "))}`:""}
+        ${t.foodT?` · 🍽 Food ${inr(t.foodT)}`:""}${b.bfast&&b.bfast.length?" · ☕ Compl.":""}
         ${t.bal>0&&ac?` · <b style="color:var(--warn)">Bal ${inr(t.bal)}</b>`:""}</div>
       <div class="bkact act-el">
         <button class="btn btn-ghost btn-sm" data-act="detail">✎ Edit / Details</button>
         ${ac?'<button class="btn btn-g btn-sm" data-act="checkout">✓ Check-Out</button>':""}
-        <button class="btn btn-ghost btn-sm" data-act="print">ߖ Bill</button>
+        <button class="btn btn-ghost btn-sm" data-act="print">🖨 Bill</button>
         <button class="btn btn-danger btn-sm mgr-up" data-act="del">✕</button>
       </div>
       <div class="detail hidden"></div>
@@ -707,7 +723,7 @@ function detailHTML(b){
 
     <!-- GUEST DETAILS -->
     <div style="${secStyle}">
-      <div style="${secHead}">ߑ Guest Details / अतिथि विवरण</div>
+      <div style="${secHead}">👤 Guest Details / अतिथि विवरण</div>
       <div class="g2">
         <div class="field"><label>Guest Name / नाम</label><input data-ed="name" value="${esc(b.name||'')}" ${ro}></div>
         <div class="field"><label>Mobile / मोबाइल</label><input data-ed="mobile" value="${esc(b.mobile||'')}" type="tel" ${ro}></div>
@@ -732,7 +748,7 @@ function detailHTML(b){
 
     <!-- ROOM & DATES -->
     <div style="${secStyle}">
-      <div style="${secHead}">ߏ Room & Dates / कमरा और तारीख</div>
+      <div style="${secHead}">🏨 Room & Dates / कमरा और तारीख</div>
       <div class="g2">
         <div class="field"><label>Bill No. / बिल नं</label><input data-ed="bill" value="${esc(b.bill||'')}" ${ro}></div>
         <div class="field"><label>Room No.</label><input data-ed="room" value="${esc(b.room||'')}" ${ro}></div>
@@ -751,7 +767,7 @@ function detailHTML(b){
 
     <!-- AMOUNTS -->
     <div style="${secStyle}">
-      <div style="${secHead}">ߒ Amounts / राशि</div>
+      <div style="${secHead}">💰 Amounts / राशि</div>
       <div class="g3">
         <div class="field"><label>Rate/Night ₹</label><input type="number" min="0" data-ed="rate" value="${b.rate}" ${ro}></div>
         <div class="field"><label>Advance ₹</label><input type="number" min="0" data-ed="adv" value="${b.adv||0}" ${ro}></div>
@@ -785,7 +801,7 @@ function detailHTML(b){
 
     <!-- FOOD -->
     <div style="${secStyle}">
-      <div style="${secHead}">ߍ Food Charges / खाना</div>
+      <div style="${secHead}">🍽 Food Charges / खाना</div>
       <div style="font-size:11px;color:var(--muted);font-weight:700;display:grid;grid-template-columns:2fr 60px 80px 28px;gap:6px;margin-bottom:4px"><span>Item</span><span>Qty</span><span>Price ₹</span><span></span></div>
       ${frows}
       ${isOwner?`<button class="btn btn-ghost btn-sm" data-addf style="margin-bottom:10px">+ Food Item</button>`:''}
@@ -866,7 +882,7 @@ function printBill(b){
       <div style="flex:1;text-align:center">
         <h2>${esc(s.hotelName)}</h2>
         <p>${esc(s.addr)}</p>
-        <p>ߓ ${esc(s.phone)}${!noGstBill?" &nbsp;·&nbsp; GSTIN: "+esc(s.gstin):""}</p>
+        <p>📞 ${esc(s.phone)}${!noGstBill?" &nbsp;·&nbsp; GSTIN: "+esc(s.gstin):""}</p>
       </div>
     </div>
     <div class="bill-title">${billTitle}</div>
@@ -902,7 +918,7 @@ function printBill(b){
         return rows;
       })()}
     </div>
-    <div class="bill-foot"><div>Thank you for staying!<br>धन्यवाद, फिर पधारें ߙ</div><div class="bill-sign">Authorised Signatory</div></div>`;
+    <div class="bill-foot"><div>Thank you for staying!<br>धन्यवाद, फिर पधारें 🙏</div><div class="bill-sign">Authorised Signatory</div></div>`;
   setTimeout(()=>window.print(),80);
 }
 
@@ -977,7 +993,7 @@ G("coConfirmBtn").addEventListener("click", ()=>{
   const extra = entered - Math.max(0,t.bal);
   if(extra > 0) toast("Checked out ✓ — Change to return: " + inr(extra));
   else if(entered < Math.max(0,t.bal)) toast("Checked out ✓ — Outstanding balance: " + inr(Math.max(0,t.bal)-entered));
-  else toast("Checked out ✓ — Bill fully settled ߙ");
+  else toast("Checked out ✓ — Bill fully settled 🙏");
   // auto-open print if balance was collected
   if(entered > 0) setTimeout(()=>printBill(b), 300);
 });
@@ -1063,7 +1079,7 @@ function renderContacts(){
   const map={};
   S.bookings.forEach(b=>{ if(!b.mobile)return; if(!map[b.mobile])map[b.mobile]={name:b.name,mobile:b.mobile,last:b.inDate,count:0}; map[b.mobile].count++; if(b.inDate>map[b.mobile].last){map[b.mobile].last=b.inDate;map[b.mobile].name=b.name;} });
   const list=Object.values(map).filter(c=>!q||(c.name+" "+c.mobile).toLowerCase().includes(q)).sort((a,b)=>b.last.localeCompare(a.last));
-  G("ctList").innerHTML=list.length?list.map(c=>`<div class="ctrow"><div><b>${esc(c.name)}</b><div style="font-size:12px;color:var(--muted)">ߓ ${esc(c.mobile)} · ${c.count} stay(s) · last ${fD(c.last)}</div></div><a class="wabtn" href="https://wa.me/91${esc(c.mobile)}" target="_blank">WhatsApp</a></div>`).join(""):"<span style='color:var(--muted)'>No contacts yet — auto-collected from bookings</span>";
+  G("ctList").innerHTML=list.length?list.map(c=>`<div class="ctrow"><div><b>${esc(c.name)}</b><div style="font-size:12px;color:var(--muted)">📱 ${esc(c.mobile)} · ${c.count} stay(s) · last ${fD(c.last)}</div></div><a class="wabtn" href="https://wa.me/91${esc(c.mobile)}" target="_blank">WhatsApp</a></div>`).join(""):"<span style='color:var(--muted)'>No contacts yet — auto-collected from bookings</span>";
 }
 G("ctSearch").addEventListener("input",renderContacts);
 
@@ -1189,7 +1205,7 @@ async function cloudPull(){
       S.settings.binKey  = keepKey;
       S.settings.pins    = Object.assign(deepCopy(DEF.settings.pins),(d.settings||{}).pins||{});
       save(false); renderAll();
-      toast("ߔ Data updated from cloud");
+      toast("🔄 Data updated from cloud");
     }
     setSyncUI("ok");
   }catch(e){ setSyncUI("err"); console.warn("pull err",e); }
@@ -1275,7 +1291,7 @@ function renderAttendance(){
   G("staffList").innerHTML = S.staff.length ? S.staff.map(s=>`
     <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 4px;border-bottom:1px solid var(--line);gap:8px;flex-wrap:wrap">
       <div><b>${esc(s.name)}</b> <span style="font-size:12px;color:var(--muted)">${esc(s.role)}</span>
-        <div style="font-size:12px;color:var(--muted)">ߓ ${esc(s.mobile||"—")} · Salary ${inr(s.salary||0)}/mo · Joined ${fD(s.joined)}</div></div>
+        <div style="font-size:12px;color:var(--muted)">📱 ${esc(s.mobile||"—")} · Salary ${inr(s.salary||0)}/mo · Joined ${fD(s.joined)}</div></div>
       <div style="display:flex;gap:6px">
         <button class="btn btn-ghost btn-sm" data-togglestaff="${s.id}">${s.active?"Deactivate":"Activate"}</button>
         <button class="btn btn-danger btn-sm mgr-up" data-delstaff="${s.id}">✕</button>
