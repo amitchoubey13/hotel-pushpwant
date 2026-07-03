@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#14204A">
+<title>Hotel Pushpwant · Indore</title>
+<style>
+:root{
+  --blue:#1B2A5E; --blue-deep:#14204A; --blue-ink:#0E1631;
+  --gold:#C6A44A; --gold-soft:#E8D9A8; --ivory:#F7F5EF;
+  --ink:#232323; --muted:#7A7668; --ok:#2E7D32; --warn:#B8860B; --danger:#B03A3A;
+  --card:#FFFFFF; --line:#E3DFD2;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--ivory);color:var(--ink);font-size:15px}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px;border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:3px;letter-spacing:.3px}
+.hidden{display:none}
+
+/* ===== LOGIN ===== */
+#loginScreen{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,#24356E,#0E1631 70%);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+.login-card{background:#fff;border-radius:14px;padding:34px 28px;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-card .crest{width:58px;height:58px;border-radius:50%;background:var(--blue);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;border:2px solid var(--gold)}
+.login-card h1{font-size:22px;color:var(--blue);letter-spacing:1px}
+.login-card .sub{font-size:12px;color:var(--muted);letter-spacing:2px;margin:2px 0 20px}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.role-btn{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:12px 6px;font-weight:600;font-size:13.5px;color:var(--ink)}
+.role-btn.sel{border-color:var(--gold);background:#FBF6E6;color:var(--blue)}
+.role-btn .rhi{display:block;font-size:11px;color:var(--muted);font-weight:500}
+#pinInput{text-align:center;font-size:22px;letter-spacing:10px;font-weight:700}
+.login-err{color:var(--danger);font-size:13px;min-height:18px;margin-top:8px}
+.btn{border:none;border-radius:8px;padding:11px 18px;font-weight:700;font-size:14.5px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:active{background:var(--blue-deep)}
+.btn-gold{background:linear-gradient(180deg,#D4B45C,#B89640);color:#241A05}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:6px}
+.w100{width:100%}
+
+/* ===== HEADER & TABS ===== */
+header{background:linear-gradient(180deg,var(--blue),var(--blue-deep));color:#fff;padding:12px 14px 0;position:sticky;top:0;z-index:60}
+.h-row{display:flex;align-items:center;gap:10px}
+.h-crest{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:17px;border:1.5px solid var(--gold);flex-shrink:0}
+.h-title{flex:1;min-width:0}
+.h-title b{font-size:16.5px;letter-spacing:1px;display:block;line-height:1.15}
+.h-title span{font-size:10.5px;color:var(--gold-soft);letter-spacing:2.5px}
+.sync-dot{width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0}
+.sync-dot.ok{background:#4CAF50}.sync-dot.err{background:#E05C5C}.sync-dot.off{background:#999}
+.h-user{font-size:11.5px;text-align:right;color:var(--gold-soft);line-height:1.3}
+.h-user b{display:block;color:#fff;font-size:12.5px}
+#logoutBtn{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;font-size:11.5px;padding:5px 9px;margin-left:6px}
+nav{display:flex;gap:2px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:84px;background:transparent;border:none;color:#B9C0D8;font-weight:600;font-size:13px;padding:10px 8px;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.active{color:#fff;border-bottom-color:var(--gold)}
+main{max-width:1060px;margin:0 auto;padding:14px 12px 90px}
+
+/* ===== CARDS / LISTS ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.card h3{font-size:15px;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.grid3,.grid4{grid-template-columns:1fr 1fr}}
+.field{margin-bottom:2px}
+.toolrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolrow input[type=search]{flex:1;min-width:150px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.3px}
+.badge.in{background:#E3F0E4;color:var(--ok)}
+.badge.out{background:#ECECEC;color:#666}
+.badge.due{background:#FBEBD6;color:var(--warn)}
+.badge.paid{background:#E3F0E4;color:var(--ok)}
+.bk-card{border-left:4px solid var(--gold)}
+.bk-card.active-guest{border-left-color:var(--ok);background:#FBFDF9}
+.bk-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.bk-head .nm{font-weight:700;font-size:16px}
+.bk-head .bill{font-size:12px;color:var(--muted);font-weight:600}
+.bk-meta{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5}
+.bk-amt{font-weight:700;color:var(--blue);font-size:15px}
+.bk-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.food-row{display:grid;grid-template-columns:2fr 64px 84px 30px;gap:6px;margin-bottom:6px;align-items:center}
+.chip-wrap{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);border-radius:20px;padding:5px 13px;font-size:13px;background:#fff;font-weight:600}
+.chip.sel{border-color:var(--gold);background:#FBF6E6;color:var(--blue)}
+.totals{background:#F4F1E6;border:1px solid var(--gold-soft);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:14px}
+.totals .tr{display:flex;justify-content:space-between;padding:2.5px 0}
+.totals .tr.gt{border-top:1.5px solid var(--gold);margin-top:5px;padding-top:7px;font-weight:800;font-size:16px;color:var(--blue)}
+.mini{font-size:12px;color:var(--muted)}
+
+/* finance */
+.sumgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:640px){.sumgrid{grid-template-columns:1fr 1fr}}
+.sumbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.sumbox .v{font-size:19px;font-weight:800;color:var(--blue)}
+.sumbox.neg .v{color:var(--danger)} .sumbox.pos .v{color:var(--ok)}
+.sumbox .l{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.4px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px}
+.bar-row .bl{width:130px;flex-shrink:0;font-weight:600}
+.bar-track{flex:1;background:#EEEBDF;border-radius:4px;height:16px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),#3A4E8F);border-radius:4px}
+.bar-row .bv{width:80px;text-align:right;font-weight:700;color:var(--blue)}
+.tx-row{display:flex;justify-content:space-between;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px;align-items:center}
+.tx-row .cat{font-weight:600}
+.tx-row .note{font-size:12px;color:var(--muted)}
+.tx-amt.exp{color:var(--danger);font-weight:700}
+.tx-amt.inc{color:var(--ok);font-weight:700}
+
+/* contacts */
+.ct-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.wa-btn{background:#25D366;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-weight:700;font-size:13px;text-decoration:none;display:inline-block}
+
+/* toast */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--blue-ink);color:#fff;padding:11px 22px;border-radius:8px;font-size:14px;opacity:0;transition:.3s;z-index:300;pointer-events:none;border:1px solid var(--gold);max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.storage-warn{background:#FBEBD6;color:#7A5A00;font-size:12.5px;padding:8px 12px;border-radius:8px;margin-bottom:10px}
+
+/* role gating */
+body[data-role="reception"] .owner-only, body[data-role="reception"] .mgr-up,
+body[data-role="staff"] .owner-only, body[data-role="staff"] .mgr-up,
+body[data-role="staff"] .action-el,
+body[data-role="manager"] .owner-only {display:none !important}
+
+/* ===== PRINT BILL ===== */
+#billSheet{display:none}
+@media print{
+  @page{size:A4;margin:10mm}
+  body *{visibility:hidden}
+  #billSheet,#billSheet *{visibility:visible}
+  #billSheet{display:block;position:absolute;left:0;top:0;width:100%}
+}
+.bill{font-family:Georgia,'Times New Roman',serif;color:#111;border:2px solid var(--blue);padding:6mm;position:relative}
+.bill::before{content:"";position:absolute;inset:2.5mm;border:1px solid var(--gold);pointer-events:none}
+.bill-head{text-align:center;border-bottom:2px solid var(--blue);padding-bottom:8px;margin-bottom:10px}
+.bill-head h2{font-size:24px;color:var(--blue);letter-spacing:3px}
+.bill-head .bh-sub{font-size:12px;color:#555;margin-top:2px}
+.bill-head .bh-gst{font-size:12px;font-weight:bold;margin-top:3px}
+.bill-title{text-align:center;font-size:13px;font-weight:bold;letter-spacing:3px;color:var(--gold);margin-bottom:8px}
+.bill-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 20px;font-size:13px;margin-bottom:10px}
+.bill-grid b{color:#333}
+.bill table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+.bill th{background:#EFEBDD;border:1px solid #BBB;padding:5px 8px;text-align:left;font-size:12px}
+.bill td{border:1px solid #CCC;padding:5px 8px}
+.bill td.r,.bill th.r{text-align:right}
+.bill-tot{width:60%;margin-left:auto;font-size:13px}
+.bill-tot .tr{display:flex;justify-content:space-between;padding:2px 0}
+.bill-tot .gt{border-top:2px solid var(--blue);font-weight:bold;font-size:15px;padding-top:5px;margin-top:3px;color:var(--blue)}
+.bill-foot{margin-top:14px;display:flex;justify-content:space-between;font-size:12px;align-items:flex-end}
+.bill-sign{text-align:center;border-top:1px solid #999;padding-top:4px;width:170px}
+</style>
+</head>
+<body data-role="">
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="crest">HP</div>
+    <h1>HOTEL PUSHPWANT</h1>
+    <div class="sub">INDORE · होटल पुष्पवंत</div>
+    <div class="role-grid" id="roleGrid">
+      <button class="role-btn" data-role="owner">Owner<span class="rhi">मालिक</span></button>
+      <button class="role-btn" data-role="manager">Manager<span class="rhi">मैनेजर</span></button>
+      <button class="role-btn" data-role="reception">Reception<span class="rhi">रिसेप्शन</span></button>
+      <button class="role-btn" data-role="staff">Staff<span class="rhi">स्टाफ</span></button>
+    </div>
+    <label>Enter PIN / पिन डालें</label>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn btn-primary w100" id="loginBtn">Login / लॉगिन</button>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" class="hidden">
+<header>
+  <div class="h-row">
+    <div class="h-crest">HP</div>
+    <div class="h-title"><b>HOTEL PUSHPWANT</b><span>INDORE · होटल पुष्पवंत</span></div>
+    <div class="sync-dot off" id="syncDot" title="Sync status"></div>
+    <div class="h-user"><b id="userRoleLbl">—</b><span id="syncLbl">local only</span></div>
+    <button id="logoutBtn">Logout</button>
+  </div>
+  <nav>
+    <button class="tab active" data-tab="booking">Booking<br>बुकिंग</button>
+    <button class="tab mgr-up" data-tab="finance">Finance<br>हिसाब</button>
+    <button class="tab" data-tab="contacts">Contacts<br>संपर्क</button>
+    <button class="tab owner-only" data-tab="settings">Settings<br>सेटिंग</button>
+  </nav>
+</header>
+
+<main>
+<div class="storage-warn hidden" id="storageWarn">⚠ Storage unavailable — data will not survive refresh on this device.</div>
+
+<!-- ============ TAB: BOOKING ============ -->
+<section id="tab-booking">
+  <div class="card action-el">
+    <h3>➕ New Check-In / नया चेक-इन <button class="btn btn-ghost btn-sm" id="toggleWA" style="margin-left:auto">📋 Paste WhatsApp</button></h3>
+    <div id="waBox" class="hidden" style="margin-bottom:10px">
+      <label>Paste guest's WhatsApp message / व्हाट्सएप मैसेज पेस्ट करें</label>
+      <textarea id="waText" rows="3" placeholder="Name: Rahul Sharma&#10;Mobile: 9876543210&#10;2 guests, 12/07/2026 to 14/07/2026"></textarea>
+      <button class="btn btn-gold btn-sm" id="waParse" style="margin-top:6px">Auto-Fill / ऑटो-फिल</button>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Guest Name / नाम *</label><input id="f_name"></div>
+      <div class="field"><label>Mobile / मोबाइल *</label><input id="f_mobile" inputmode="numeric" maxlength="10"></div>
+      <div class="field"><label>Address / City / पता</label><input id="f_addr"></div>
+      <div class="field grid2" style="gap:6px"><div><label>Adults</label><input id="f_adults" type="number" value="2" min="0"></div><div><label>Children</label><input id="f_children" type="number" value="0" min="0"></div></div>
+      <div class="field"><label>ID Type / पहचान</label><select id="f_idtype"><option>Aadhaar</option><option>Driving License</option><option>Voter ID</option><option>Passport</option><option>PAN</option><option>Other</option></select></div>
+      <div class="field"><label>ID Number</label><input id="f_idno"></div>
+      <div class="field"><label>Room No. / कमरा *</label><input id="f_room"></div>
+      <div class="field"><label>Room Type</label><select id="f_rtype"><option>Standard Non-AC</option><option>Standard AC</option><option>Deluxe AC</option><option>Family Room</option></select></div>
+      <div class="field"><label>Rate / Night ₹ *</label><input id="f_rate" type="number" min="0"></div>
+      <div class="field"><label>Nights / रातें</label><input id="f_nights" type="number" min="1" value="1"></div>
+      <div class="field"><label>Check-In Date</label><input id="f_indate" type="date"></div>
+      <div class="field"><label>Check-In Time</label><input id="f_intime" type="time"></div>
+      <div class="field"><label>Advance ₹ / एडवांस</label><input id="f_adv" type="number" min="0" value="0"></div>
+      <div class="field"><label>Advance Mode</label><select id="f_advmode"><option>Cash</option><option>UPI</option><option>Card</option></select></div>
+    </div>
+    <button class="btn btn-primary w100" id="addBooking" style="margin-top:12px">✓ Check-In Guest / चेक-इन करें</button>
+  </div>
+
+  <div class="toolrow">
+    <input type="search" id="bkSearch" placeholder="🔍 Search name / mobile / bill / room…">
+    <select id="bkFilter" style="width:auto"><option value="all">All / सभी</option><option value="in">Checked-In</option><option value="out">Checked-Out</option></select>
+    <button class="btn btn-ghost btn-sm mgr-up" id="bkExport">⬇ CSV</button>
+  </div>
+  <div id="bookingList"></div>
+</section>
+
+<!-- ============ TAB: FINANCE ============ -->
+<section id="tab-finance" class="hidden">
+  <div class="toolrow">
+    <label style="margin:0">Month / महीना</label>
+    <input type="month" id="finMonth" style="width:auto">
+    <button class="btn btn-ghost btn-sm" id="finExport" style="margin-left:auto">⬇ CSV</button>
+  </div>
+  <div class="sumgrid">
+    <div class="sumbox pos"><div class="v" id="sumInc">₹0</div><div class="l">INCOME / आय</div></div>
+    <div class="sumbox neg"><div class="v" id="sumExp">₹0</div><div class="l">EXPENSE / खर्च</div></div>
+    <div class="sumbox" id="sumNetBox"><div class="v" id="sumNet">₹0</div><div class="l">NET / शुद्ध</div></div>
+    <div class="sumbox"><div class="v" id="sumCash" style="font-size:14px">₹0 / ₹0</div><div class="l">CASH / UPI</div></div>
+  </div>
+  <div class="card">
+    <h3>💸 Add Expense / खर्च जोड़ें</h3>
+    <div class="grid4">
+      <div class="field"><label>Date</label><input id="e_date" type="date"></div>
+      <div class="field"><label>Category / श्रेणी</label><select id="e_cat"></select></div>
+      <div class="field"><label>Amount ₹</label><input id="e_amt" type="number" min="0"></div>
+      <div class="field"><label>Mode</label><select id="e_mode"><option>Cash</option><option>UPI</option><option>PhonePe</option></select></div>
+    </div>
+    <div class="grid2" style="margin-top:8px">
+      <div class="field"><label>Note / विवरण</label><input id="e_note"></div>
+      <div class="field" style="display:flex;align-items:flex-end;gap:6px">
+        <button class="btn btn-primary" id="addExp" style="flex:1">+ Expense</button>
+        <button class="btn btn-gold" id="addInc" style="flex:1">+ Income</button>
+      </div>
+    </div>
+  </div>
+  <div class="card"><h3>📊 Expense by Category</h3><div id="catBars" class="mini">No expenses this month.</div></div>
+  <div class="card"><h3>📒 Transactions / लेन-देन</h3><div id="txList"></div></div>
+</section>
+
+<!-- ============ TAB: CONTACTS ============ -->
+<section id="tab-contacts" class="hidden">
+  <div class="toolrow"><input type="search" id="ctSearch" placeholder="🔍 Search contacts…"></div>
+  <div class="card"><div id="ctList"></div></div>
+</section>
+
+<!-- ============ TAB: SETTINGS ============ -->
+<section id="tab-settings" class="hidden">
+  <div class="card">
+    <h3>🏨 Hotel Details (printed on bill)</h3>
+    <div class="grid2">
+      <div class="field"><label>Hotel Name</label><input id="s_name"></div>
+      <div class="field"><label>Phone</label><input id="s_phone"></div>
+      <div class="field" style="grid-column:1/-1"><label>Full Address (Indore)</label><input id="s_addr"></div>
+      <div class="field"><label>GSTIN</label><input id="s_gstin"></div>
+      <div class="field"><label>Next Bill No. (numeric)</label><input id="s_billno" type="number" min="1"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🔑 Login PINs (4 digits)</h3>
+    <div class="grid4">
+      <div class="field"><label>Owner</label><input id="s_pin_owner" maxlength="4" inputmode="numeric"></div>
+      <div class="field"><label>Manager</label><input id="s_pin_manager" maxlength="4" inputmode="numeric"></div>
+      <div class="field"><label>Reception</label><input id="s_pin_reception" maxlength="4" inputmode="numeric"></div>
+      <div class="field"><label>Staff</label><input id="s_pin_staff" maxlength="4" inputmode="numeric"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🍽 Complimentary Breakfast Menu</h3>
+    <div class="mini" style="margin-bottom:6px">One item per line (English - Hindi)</div>
+    <textarea id="s_breakfast" rows="5"></textarea>
+  </div>
+  <div class="card">
+    <h3>☁ Cloud Sync (Google Sheets — free)</h3>
+    <div class="mini" style="margin-bottom:6px">Paste your Google Apps Script Web App URL. Leave blank for this-device-only mode. See setup guide.</div>
+    <input id="s_syncurl" placeholder="https://script.google.com/macros/s/…/exec">
+  </div>
+  <div class="card">
+    <h3>🗂 Data</h3>
+    <div class="toolrow" style="margin:0">
+      <button class="btn btn-ghost btn-sm" id="importCsvBtn">⬆ Import Bookings CSV</button>
+      <input type="file" id="importCsvFile" accept=".csv" class="hidden">
+      <button class="btn btn-danger btn-sm" id="clearSample" data-confirm="">Clear ALL data</button>
+    </div>
+  </div>
+  <button class="btn btn-primary w100" id="saveSettings">💾 Save Settings</button>
+</section>
+</main>
+</div>
+
+<!-- ============ PRINT BILL ============ -->
+<div id="billSheet"><div class="bill" id="billInner"></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ================= STATE ================= */
+const DEFAULTS = {
+  settings:{
+    hotelName:"HOTEL PUSHPWANT",
+    phone:"[PHONE]",
+    addr:"[FULL ADDRESS], Indore, Madhya Pradesh",
+    gstin:"[GSTIN]",
+    nextBill:1,
+    pins:{owner:"1234",manager:"2345",reception:"3456",staff:"4567"},
+    breakfast:["Poha - पोहा","Upma - उपमा","Aloo Paratha - आलू पराठा","Bread Butter - ब्रेड बटर","Tea - चाय","Coffee - कॉफ़ी"],
+    cats:["Groceries / किराना","Vegetables / सब्ज़ी","Milk & Dairy / दूध","Gas / गैस","Electricity / बिजली","Water / पानी","Staff Salary / वेतन","Laundry / धुलाई","Repairs / मरम्मत","Room Supplies / सामान","Marketing","Other / अन्य"],
+    syncUrl:""
+  },
+  bookings:[], tx:[], updatedAt:0
+};
+let S = JSON.parse(JSON.stringify(DEFAULTS));
+let storageOK = true;
+try{ localStorage.setItem("__t","1"); localStorage.removeItem("__t"); }catch(e){ storageOK = false; }
+
+function load(){
+  if(!storageOK){ document.getElementById("storageWarn").classList.remove("hidden"); return; }
+  try{
+    const raw = localStorage.getItem("hp_data");
+    if(raw){ const d = JSON.parse(raw); S = Object.assign({},DEFAULTS,d);
+      S.settings = Object.assign({},DEFAULTS.settings,d.settings||{});
+      S.settings.pins = Object.assign({},DEFAULTS.settings.pins,(d.settings||{}).pins||{});
+    }
+  }catch(e){}
+}
+let pushTimer=null;
+function save(pushCloud=true){
+  S.updatedAt = Date.now();
+  if(storageOK){ try{ localStorage.setItem("hp_data", JSON.stringify(S)); }catch(e){} }
+  if(pushCloud && S.settings.syncUrl){ clearTimeout(pushTimer); pushTimer=setTimeout(cloudPush, 1200); }
+}
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = v => { const n = parseFloat(v); return isNaN(n)?0:n; };
+const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const todayISO = () => new Date().toISOString().slice(0,10);
+const fmtD = iso => { if(!iso) return "—"; const [y,m,d]=iso.split("-"); return d+"-"+m+"-"+y; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2200); }
+
+/* two-tap confirm helper */
+function twoTap(btn, label, fn){
+  if(btn.dataset.confirm==="1"){ btn.dataset.confirm=""; fn(); return; }
+  btn.dataset.confirm="1"; const old=btn.textContent; btn.textContent="Sure? / पक्का?";
+  setTimeout(()=>{ if(btn.isConnected && btn.dataset.confirm==="1"){ btn.dataset.confirm=""; btn.textContent=old; } },2500);
+}
+
+/* ================= LOGIN ================= */
+let ROLE = null, selRole = "owner";
+document.querySelector('[data-role="owner"]').classList.add("sel");
+$("roleGrid").addEventListener("click", e=>{
+  const b = e.target.closest(".role-btn"); if(!b) return;
+  selRole = b.dataset.role;
+  document.querySelectorAll(".role-btn").forEach(x=>x.classList.toggle("sel", x===b));
+  $("pinInput").focus();
+});
+function doLogin(){
+  const pin = $("pinInput").value.trim();
+  if(pin === S.settings.pins[selRole]){
+    ROLE = selRole;
+    document.body.dataset.role = ROLE;
+    $("userRoleLbl").textContent = selRole.charAt(0).toUpperCase()+selRole.slice(1);
+    $("loginScreen").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    $("pinInput").value=""; $("loginErr").textContent="";
+    renderAll(); cloudStart();
+  } else { $("loginErr").textContent = "Wrong PIN / गलत पिन"; $("pinInput").value=""; }
+}
+$("loginBtn").addEventListener("click", doLogin);
+$("pinInput").addEventListener("keydown", e=>{ if(e.key==="Enter") doLogin(); });
+$("logoutBtn").addEventListener("click", ()=>{ ROLE=null; document.body.dataset.role=""; $("app").classList.add("hidden"); $("loginScreen").classList.remove("hidden"); });
+
+/* ================= TABS ================= */
+document.querySelector("nav").addEventListener("click", e=>{
+  const t = e.target.closest(".tab"); if(!t) return;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active", x===t));
+  ["booking","finance","contacts","settings"].forEach(n=>$("tab-"+n).classList.toggle("hidden", n!==t.dataset.tab));
+  if(t.dataset.tab==="finance") renderFinance();
+  if(t.dataset.tab==="contacts") renderContacts();
+  if(t.dataset.tab==="settings") fillSettings();
+});
+
+/* ================= BOOKING ================= */
+$("f_indate").value = todayISO();
+$("f_intime").value = new Date().toTimeString().slice(0,5);
+
+$("toggleWA").addEventListener("click", ()=> $("waBox").classList.toggle("hidden"));
+$("waParse").addEventListener("click", ()=>{
+  const t = $("waText").value;
+  const mob = t.replace(/[^0-9]/g," ").match(/\b[6-9]\d{9}\b/);
+  if(mob) $("f_mobile").value = mob[0];
+  let nm = t.match(/(?:name|नाम)\s*[:\-–]?\s*([A-Za-z\u0900-\u097F .]{2,40})/i);
+  if(!nm){ const fl = t.split(/\n/)[0].trim(); if(fl && !/\d{6,}/.test(fl) && fl.length<40) nm=[0,fl]; }
+  if(nm) $("f_name").value = nm[1].trim();
+  const g = t.match(/(\d+)\s*(?:guests?|persons?|pax|लोग|व्यक्ति)/i);
+  if(g) $("f_adults").value = g[1];
+  const dates = t.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/g);
+  if(dates && dates[0]){ const p=dates[0].split(/[\/\-.]/); let y=p[2].length===2?"20"+p[2]:p[2];
+    $("f_indate").value = y+"-"+p[1].padStart(2,"0")+"-"+p[0].padStart(2,"0");
+    if(dates[1]){ const q=dates[1].split(/[\/\-.]/); let y2=q[2].length===2?"20"+q[2]:q[2];
+      const d1=new Date($("f_indate").value), d2=new Date(y2+"-"+q[1].padStart(2,"0")+"-"+q[0].padStart(2,"0"));
+      const n=Math.round((d2-d1)/86400000); if(n>0) $("f_nights").value=n; }
+  }
+  toast("Auto-filled — please verify / जाँच लें");
+});
+
+$("addBooking").addEventListener("click", ()=>{
+  const name=$("f_name").value.trim(), mobile=$("f_mobile").value.trim(), room=$("f_room").value.trim(), rate=num($("f_rate").value);
+  if(!name || !room || !rate){ toast("Name, Room & Rate required / नाम, कमरा, रेट ज़रूरी"); return; }
+  const billNo = "HP-" + String(S.settings.nextBill).padStart(3,"0");
+  S.settings.nextBill++;
+  S.bookings.unshift({
+    id:uid(), bill:billNo, name, mobile, addr:$("f_addr").value.trim(),
+    adults:num($("f_adults").value), children:num($("f_children").value),
+    idType:$("f_idtype").value, idNo:$("f_idno").value.trim(),
+    room, rtype:$("f_rtype").value, rate, nights:Math.max(1,num($("f_nights").value)),
+    inDate:$("f_indate").value||todayISO(), inTime:$("f_intime").value,
+    outDate:"", outTime:"", food:[], bfast:[],
+    adv:num($("f_adv").value), advMode:$("f_advmode").value, balMode:"Cash", status:"in"
+  });
+  ["f_name","f_mobile","f_addr","f_idno","f_room","f_rate"].forEach(i=>$(i).value="");
+  $("f_adults").value=2; $("f_children").value=0; $("f_nights").value=1; $("f_adv").value=0; $("waText").value="";
+  save(); renderBookings(); toast("Checked in — Bill " + billNo);
+});
+
+function bTotals(b){
+  const roomT = b.rate * b.nights;
+  const foodT = (b.food||[]).reduce((s,f)=>s + num(f.qty)*num(f.price), 0);
+  const taxable = roomT + foodT;
+  const cgst = taxable*0.025, sgst = taxable*0.025;
+  const grand = Math.round(taxable + cgst + sgst);
+  const bal = grand - num(b.adv);
+  return {roomT,foodT,taxable,cgst,sgst,grand,bal};
+}
+function payBadge(b){
+  const t=bTotals(b);
+  if(b.status==="out" || t.bal<=0) return '<span class="badge paid">PAID</span>';
+  if(b.adv>0) return '<span class="badge due">ADV '+inr(b.adv)+'</span>';
+  return '<span class="badge due">PENDING</span>';
+}
+
+function renderBookings(){
+  const q = $("bkSearch").value.trim().toLowerCase();
+  const f = $("bkFilter").value;
+  const list = S.bookings.filter(b=>{
+    if(f!=="all" && b.status!==f) return false;
+    if(!q) return true;
+    return [b.name,b.mobile,b.bill,b.room].join(" ").toLowerCase().includes(q);
+  }).sort((a,b)=> (a.status==="in"?0:1)-(b.status==="in"?0:1));
+  const el = $("bookingList");
+  if(!list.length){ el.innerHTML = '<div class="card mini" style="text-align:center">No bookings yet / कोई बुकिंग नहीं</div>'; return; }
+  el.innerHTML = list.map(b=>{
+    const t=bTotals(b), active=b.status==="in";
+    return `<div class="card bk-card ${active?'active-guest':''}" data-id="${b.id}">
+      <div class="bk-head">
+        <div><div class="nm">${esc(b.name)} <span class="badge ${active?'in':'out'}">${active?'IN':'OUT'}</span></div>
+        <div class="bill">${b.bill} · Room ${esc(b.room)} · ${esc(b.rtype)}</div></div>
+        <div style="text-align:right"><div class="bk-amt">${inr(t.grand)}</div>${payBadge(b)}</div>
+      </div>
+      <div class="bk-meta">📱 ${esc(b.mobile||"—")} · ${fmtD(b.inDate)} ${b.inTime||""} · ${b.nights} night(s) · ${b.adults}A ${b.children}C
+      ${b.food&&b.food.length? " · 🍽 Food "+inr(t.foodT):""}${b.bfast&&b.bfast.length?" · ☕ Compl. breakfast":""}
+      ${t.bal>0 && active ? ' · <b style="color:var(--warn)">Balance '+inr(t.bal)+'</b>':''}</div>
+      <div class="bk-actions action-el">
+        <button class="btn btn-ghost btn-sm" data-act="detail">✎ Details / Food</button>
+        ${active?'<button class="btn btn-gold btn-sm" data-act="checkout">✓ Check-Out</button>':''}
+        <button class="btn btn-ghost btn-sm" data-act="print">🖨 Bill</button>
+        <button class="btn btn-danger btn-sm mgr-up" data-act="del">✕</button>
+      </div>
+      <div class="detail hidden" data-detail></div>
+    </div>`;
+  }).join("");
+}
+
+function detailHTML(b){
+  const t=bTotals(b);
+  const bfChips = S.settings.breakfast.map(item=>{
+    const sel = (b.bfast||[]).includes(item);
+    return `<button class="chip ${sel?'sel':''}" data-bf="${esc(item)}">${esc(item)}</button>`;
+  }).join("");
+  const foodRows = (b.food||[]).map((f,i)=>`
+    <div class="food-row">
+      <input value="${esc(f.name)}" data-food="${i}" data-fld="name" placeholder="Item">
+      <input value="${esc(f.qty)}" type="number" min="0" data-food="${i}" data-fld="qty">
+      <input value="${esc(f.price)}" type="number" min="0" data-food="${i}" data-fld="price">
+      <button class="del-food" data-delfood="${i}" style="background:none;border:none;color:var(--danger);font-size:16px">✕</button>
+    </div>`).join("");
+  return `
+    <hr style="border:none;border-top:1px solid var(--line);margin:10px 0">
+    <div class="grid3">
+      <div class="field"><label>Room Rate ₹</label><input type="number" data-edit="rate" value="${b.rate}"></div>
+      <div class="field"><label>Nights</label><input type="number" min="1" data-edit="nights" value="${b.nights}"></div>
+      <div class="field"><label>Advance ₹</label><input type="number" min="0" data-edit="adv" value="${b.adv}"></div>
+    </div>
+    <label style="margin-top:8px">🍽 Food Charges / खाना</label>
+    <div class="food-row" style="font-size:11px;color:var(--muted);font-weight:600"><span>Item</span><span>Qty</span><span>Price ₹</span><span></span></div>
+    ${foodRows}
+    <button class="btn btn-ghost btn-sm" data-addfood>+ Add Food Item</button>
+    <label style="margin-top:10px">☕ Complimentary Breakfast (prints at ₹0)</label>
+    <div class="chip-wrap">${bfChips}</div>
+    <div class="totals">
+      <div class="tr"><span>Room (${inr(b.rate)} × ${b.nights})</span><b>${inr(t.roomT)}</b></div>
+      <div class="tr"><span>Food</span><b>${inr(t.foodT)}</b></div>
+      <div class="tr"><span>CGST 2.5%</span><b>${inr(t.cgst)}</b></div>
+      <div class="tr"><span>SGST 2.5%</span><b>${inr(t.sgst)}</b></div>
+      <div class="tr gt"><span>Grand Total</span><span>${inr(t.grand)}</span></div>
+      <div class="tr"><span>Advance (${esc(b.advMode)})</span><b>− ${inr(b.adv)}</b></div>
+      <div class="tr"><span><b>Balance Due</b></span><b style="color:${t.bal>0?'var(--warn)':'var(--ok)'}">${inr(Math.max(0,t.bal))}</b></div>
+    </div>`;
+}
+
+$("bookingList").addEventListener("click", e=>{
+  const card = e.target.closest(".bk-card"); if(!card) return;
+  const b = S.bookings.find(x=>x.id===card.dataset.id); if(!b) return;
+  const btn = e.target.closest("button"); if(!btn) return;
+
+  if(btn.dataset.act==="detail"){
+    const d = card.querySelector("[data-detail]");
+    if(d.classList.contains("hidden")){ d.innerHTML = detailHTML(b); d.classList.remove("hidden"); }
+    else d.classList.add("hidden");
+    return;
+  }
+  if(btn.dataset.act==="checkout"){
+    twoTap(btn,"",()=>{
+      b.status="out"; b.outDate=todayISO(); b.outTime=new Date().toTimeString().slice(0,5);
+      save(); renderBookings(); toast("Checked out — " + b.bill + " · Collect balance " + inr(Math.max(0,bTotals(b).bal)));
+    }); return;
+  }
+  if(btn.dataset.act==="del"){ twoTap(btn,"",()=>{ S.bookings = S.bookings.filter(x=>x.id!==b.id); save(); renderBookings(); toast("Deleted"); }); return; }
+  if(btn.dataset.act==="print"){ printBill(b); return; }
+  if(btn.hasAttribute("data-addfood")){ b.food=b.food||[]; b.food.push({name:"",qty:1,price:0}); save(); card.querySelector("[data-detail]").innerHTML = detailHTML(b); return; }
+  if(btn.dataset.delfood!==undefined){ b.food.splice(num(btn.dataset.delfood),1); save(); card.querySelector("[data-detail]").innerHTML = detailHTML(b); renderBookings0(card,b); return; }
+  if(btn.dataset.bf){ b.bfast=b.bfast||[]; const i=b.bfast.indexOf(btn.dataset.bf);
+    if(i>=0) b.bfast.splice(i,1); else b.bfast.push(btn.dataset.bf);
+    btn.classList.toggle("sel"); save(); return; }
+});
+function renderBookings0(){} // detail stays open; list header amounts refresh on next render
+
+/* live edits inside detail — update model without re-render (keeps focus) */
+$("bookingList").addEventListener("input", e=>{
+  const card = e.target.closest(".bk-card"); if(!card) return;
+  const b = S.bookings.find(x=>x.id===card.dataset.id); if(!b) return;
+  if(e.target.dataset.edit){ b[e.target.dataset.edit] = num(e.target.value); if(e.target.dataset.edit==="nights") b.nights=Math.max(1,b.nights); save(); }
+  if(e.target.dataset.food!==undefined){
+    const f=b.food[num(e.target.dataset.food)]; if(!f) return;
+    const fld=e.target.dataset.fld;
+    f[fld] = fld==="name" ? e.target.value : num(e.target.value); save();
+  }
+});
+$("bookingList").addEventListener("focusout", e=>{
+  const card = e.target.closest(".bk-card"); if(!card) return;
+  if(e.target.dataset.edit || e.target.dataset.food!==undefined){
+    const b = S.bookings.find(x=>x.id===card.dataset.id);
+    const d = card.querySelector("[data-detail]");
+    if(b && d && !d.classList.contains("hidden")){
+      // refresh totals block only
+      const tot = d.querySelector(".totals"); if(tot){ const tmp=document.createElement("div"); tmp.innerHTML=detailHTML(b); tot.outerHTML = tmp.querySelector(".totals").outerHTML; }
+    }
+  }
+});
+$("bkSearch").addEventListener("input", renderBookings);
+$("bkFilter").addEventListener("change", renderBookings);
+
+/* ================= PRINT BILL ================= */
+function printBill(b){
+  const t=bTotals(b), st=S.settings;
+  const foodRows=(b.food||[]).filter(f=>f.name).map(f=>`<tr><td>${esc(f.name)}</td><td class="r">${f.qty}</td><td class="r">${inr(f.price)}</td><td class="r">${inr(num(f.qty)*num(f.price))}</td></tr>`).join("");
+  const bfRows=(b.bfast||[]).map(x=>`<tr><td>Complimentary Breakfast — ${esc(x)}</td><td class="r">1</td><td class="r">₹0</td><td class="r">₹0</td></tr>`).join("");
+  $("billInner").innerHTML = `
+    <div class="bill-head"><h2>${esc(st.hotelName)}</h2>
+      <div class="bh-sub">${esc(st.addr)} · 📞 ${esc(st.phone)}</div>
+      <div class="bh-gst">GSTIN: ${esc(st.gstin)}</div></div>
+    <div class="bill-title">TAX INVOICE</div>
+    <div class="bill-grid">
+      <div><b>Bill No:</b> ${esc(b.bill)}</div><div><b>Date:</b> ${fmtD(b.outDate||todayISO())}</div>
+      <div><b>Guest:</b> ${esc(b.name)}</div><div><b>Mobile:</b> ${esc(b.mobile)}</div>
+      <div><b>Address:</b> ${esc(b.addr||"—")}</div><div><b>ID:</b> ${esc(b.idType)} ${esc(b.idNo||"")}</div>
+      <div><b>Room:</b> ${esc(b.room)} (${esc(b.rtype)})</div><div><b>Guests:</b> ${b.adults} Adult, ${b.children} Child</div>
+      <div><b>Check-In:</b> ${fmtD(b.inDate)} ${esc(b.inTime||"")}</div><div><b>Check-Out:</b> ${fmtD(b.outDate)||"—"} ${esc(b.outTime||"")}</div>
+    </div>
+    <table><tr><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr>
+      <tr><td>Room Charges (${esc(b.rtype)})</td><td class="r">${b.nights} night(s)</td><td class="r">${inr(b.rate)}</td><td class="r">${inr(t.roomT)}</td></tr>
+      ${foodRows}${bfRows}</table>
+    <div class="bill-tot">
+      <div class="tr"><span>Taxable Amount</span><span>${inr(t.taxable)}</span></div>
+      <div class="tr"><span>CGST @ 2.5%</span><span>${inr(t.cgst)}</span></div>
+      <div class="tr"><span>SGST @ 2.5%</span><span>${inr(t.sgst)}</span></div>
+      <div class="tr gt"><span>Grand Total</span><span>${inr(t.grand)}</span></div>
+      <div class="tr"><span>Advance Received (${esc(b.advMode)})</span><span>− ${inr(b.adv)}</span></div>
+      <div class="tr"><span><b>Balance ${t.bal>0?"Due":"—"}</b></span><span><b>${inr(Math.max(0,t.bal))}</b></span></div>
+    </div>
+    <div class="bill-foot"><div>Thank you for staying with us!<br>धन्यवाद, फिर पधारें 🙏</div>
+      <div class="bill-sign">Authorised Signatory</div></div>`;
+  setTimeout(()=>window.print(), 60);
+}
+
+/* ================= FINANCE ================= */
+$("finMonth").value = todayISO().slice(0,7);
+$("e_date").value = todayISO();
+function fillCats(){ $("e_cat").innerHTML = S.settings.cats.map(c=>`<option>${esc(c)}</option>`).join(""); }
+
+function incomeFromBookings(){
+  const out=[];
+  S.bookings.forEach(b=>{
+    const t=bTotals(b);
+    if(num(b.adv)>0) out.push({id:"adv-"+b.id, date:b.inDate, cat:"Room Booking / बुकिंग", amount:num(b.adv), mode:b.advMode, note:"Advance · "+b.bill+" · "+b.name, type:"income", auto:true});
+    if(b.status==="out" && t.bal>0) out.push({id:"bal-"+b.id, date:b.outDate||b.inDate, cat:"Room Booking / बुकिंग", amount:t.bal, mode:b.balMode||"Cash", note:"Balance · "+b.bill+" · "+b.name, type:"income", auto:true});
+  });
+  return out;
+}
+function addTx(type){
+  const amt=num($("e_amt").value);
+  if(!amt){ toast("Enter amount / राशि डालें"); return; }
+  S.tx.unshift({id:uid(), date:$("e_date").value||todayISO(), cat:type==="expense"?$("e_cat").value:"Other Income / अन्य आय", amount:amt, mode:$("e_mode").value, note:$("e_note").value.trim(), type});
+  $("e_amt").value=""; $("e_note").value="";
+  save(); renderFinance(); toast((type==="expense"?"Expense":"Income")+" added ✓");
+}
+$("addExp").addEventListener("click", ()=>addTx("expense"));
+$("addInc").addEventListener("click", ()=>addTx("income"));
+$("finMonth").addEventListener("change", renderFinance);
+
+function renderFinance(){
+  fillCats();
+  const m = $("finMonth").value;
+  const all = S.tx.concat(incomeFromBookings()).filter(t=>t.date && t.date.slice(0,7)===m)
+    .sort((a,b)=> b.date.localeCompare(a.date));
+  let inc=0,exp=0,cash=0,upi=0;
+  const byCat={};
+  all.forEach(t=>{
+    if(t.type==="income"){ inc+=t.amount; if(/cash/i.test(t.mode)) cash+=t.amount; else upi+=t.amount; }
+    else { exp+=t.amount; byCat[t.cat]=(byCat[t.cat]||0)+t.amount; }
+  });
+  $("sumInc").textContent=inr(inc); $("sumExp").textContent=inr(exp);
+  const net=inc-exp; $("sumNet").textContent=inr(net);
+  $("sumNetBox").className = "sumbox " + (net>=0?"pos":"neg");
+  $("sumCash").textContent = inr(cash)+" / "+inr(upi);
+  // category bars
+  const cats = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const max = cats.length? cats[0][1] : 1;
+  $("catBars").innerHTML = cats.length? cats.map(([c,v])=>`
+    <div class="bar-row"><div class="bl">${esc(c.split("/")[0].trim())}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4,v/max*100)}%"></div></div>
+    <div class="bv">${inr(v)}</div></div>`).join("") : '<span class="mini">No expenses this month / इस महीने कोई खर्च नहीं</span>';
+  // list
+  $("txList").innerHTML = all.length? all.map(t=>`
+    <div class="tx-row" data-id="${t.id}">
+      <div><div class="cat">${esc(t.cat)} <span class="mini">· ${esc(t.mode)}</span></div>
+      <div class="note">${fmtD(t.date)}${t.note? " · "+esc(t.note):""}${t.auto?' · <i>auto from booking</i>':''}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="tx-amt ${t.type==="expense"?"exp":"inc"}">${t.type==="expense"?"−":"+"} ${inr(t.amount)}</span>
+        ${t.auto? "" : '<button class="btn btn-danger btn-sm action-el owner-only" data-deltx="'+t.id+'">✕</button>'}
+      </div>
+    </div>`).join("") : '<span class="mini">No transactions / कोई लेन-देन नहीं</span>';
+}
+$("txList").addEventListener("click", e=>{
+  const b=e.target.closest("[data-deltx]"); if(!b) return;
+  twoTap(b,"",()=>{ S.tx = S.tx.filter(t=>t.id!==b.dataset.deltx); save(); renderFinance(); toast("Deleted"); });
+});
+
+/* ================= CONTACTS ================= */
+function renderContacts(){
+  const q=$("ctSearch").value.trim().toLowerCase();
+  const map={};
+  S.bookings.forEach(b=>{ if(b.mobile && !map[b.mobile]) map[b.mobile]={name:b.name,mobile:b.mobile,last:b.inDate,count:0}; if(b.mobile){map[b.mobile].count++; if(b.inDate>map[b.mobile].last){map[b.mobile].last=b.inDate;map[b.mobile].name=b.name;}} });
+  const list=Object.values(map).filter(c=>!q || (c.name+" "+c.mobile).toLowerCase().includes(q)).sort((a,b)=>b.last.localeCompare(a.last));
+  $("ctList").innerHTML = list.length? list.map(c=>`
+    <div class="ct-row"><div><b>${esc(c.name)}</b><div class="mini">📱 ${esc(c.mobile)} · ${c.count} stay(s) · last ${fmtD(c.last)}</div></div>
+    <a class="wa-btn" target="_blank" rel="noopener" href="https://wa.me/91${esc(c.mobile)}">WhatsApp</a></div>`).join("")
+    : '<span class="mini">No contacts yet — they collect automatically from bookings.</span>';
+}
+$("ctSearch").addEventListener("input", renderContacts);
+
+/* ================= SETTINGS ================= */
+function fillSettings(){
+  const s=S.settings;
+  $("s_name").value=s.hotelName; $("s_phone").value=s.phone; $("s_addr").value=s.addr;
+  $("s_gstin").value=s.gstin; $("s_billno").value=s.nextBill;
+  $("s_pin_owner").value=s.pins.owner; $("s_pin_manager").value=s.pins.manager;
+  $("s_pin_reception").value=s.pins.reception; $("s_pin_staff").value=s.pins.staff;
+  $("s_breakfast").value=s.breakfast.join("\n");
+  $("s_syncurl").value=s.syncUrl||"";
+}
+$("saveSettings").addEventListener("click", ()=>{
+  const s=S.settings;
+  s.hotelName=$("s_name").value.trim()||s.hotelName; s.phone=$("s_phone").value.trim();
+  s.addr=$("s_addr").value.trim(); s.gstin=$("s_gstin").value.trim();
+  s.nextBill=Math.max(1,num($("s_billno").value));
+  ["owner","manager","reception","staff"].forEach(r=>{ const v=$("s_pin_"+r).value.trim(); if(/^\d{4}$/.test(v)) s.pins[r]=v; });
+  s.breakfast=$("s_breakfast").value.split("\n").map(x=>x.trim()).filter(Boolean);
+  s.syncUrl=$("s_syncurl").value.trim();
+  save(); toast("Settings saved ✓"); cloudStart();
+});
+$("clearSample").addEventListener("click", e=>{
+  twoTap(e.target,"",()=>{ S.bookings=[]; S.tx=[]; S.settings.nextBill=1; save(); renderAll(); toast("All data cleared"); });
+});
+
+/* CSV export/import */
+function dlCSV(name, rows){
+  const csv = rows.map(r=>r.map(c=>'"'+String(c==null?"":c).replace(/"/g,'""')+'"').join(",")).join("\n");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"})); a.download=name; a.click();
+}
+$("bkExport").addEventListener("click", ()=>{
+  const rows=[["Bill","Name","Mobile","Address","Adults","Children","IDType","IDNo","Room","RoomType","Rate","Nights","CheckIn","CheckInTime","CheckOut","Status","FoodTotal","Taxable","CGST","SGST","GrandTotal","Advance","AdvMode","Balance"]];
+  S.bookings.forEach(b=>{ const t=bTotals(b); rows.push([b.bill,b.name,b.mobile,b.addr,b.adults,b.children,b.idType,b.idNo,b.room,b.rtype,b.rate,b.nights,b.inDate,b.inTime,b.outDate,b.status,t.foodT,t.taxable,Math.round(t.cgst),Math.round(t.sgst),t.grand,b.adv,b.advMode,Math.max(0,t.bal)]); });
+  dlCSV("pushpwant-bookings.csv", rows); toast("CSV downloaded");
+});
+$("finExport").addEventListener("click", ()=>{
+  const rows=[["Date","Type","Category","Amount","Mode","Note"]];
+  S.tx.concat(incomeFromBookings()).sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>rows.push([t.date,t.type,t.cat,t.amount,t.mode,t.note||""]));
+  dlCSV("pushpwant-finance.csv", rows); toast("CSV downloaded");
+});
+$("importCsvBtn").addEventListener("click", ()=>$("importCsvFile").click());
+$("importCsvFile").addEventListener("change", e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const lines=rd.result.replace(/^\ufeff/,"").split(/\r?\n/).filter(l=>l.trim());
+      const parse=l=>{ const out=[];let cur="",q=false; for(const ch of l){ if(ch==='"'){q=!q;cur+=""} else if(ch===','&&!q){out.push(cur);cur=""} else cur+=ch; } out.push(cur); return out.map(x=>x.replace(/^"|"$/g,"").replace(/""/g,'"')); };
+      const head=parse(lines[0]).map(h=>h.toLowerCase().trim());
+      const col=(...names)=>{ for(const n of names){ const i=head.findIndex(h=>h.includes(n)); if(i>=0) return i;} return -1; };
+      const ci={bill:col("bill"),name:col("name","guest"),mobile:col("mobile","phone"),room:col("room no","room"),rate:col("rate"),nights:col("night"),ind:col("checkin","check-in","check in"),adv:col("advance")};
+      let added=0;
+      for(let i=1;i<lines.length;i++){
+        const c=parse(lines[i]); const name=ci.name>=0?c[ci.name]:""; if(!name) continue;
+        S.bookings.push({id:uid(),bill:ci.bill>=0&&c[ci.bill]?c[ci.bill]:"HP-"+String(S.settings.nextBill++).padStart(3,"0"),
+          name, mobile:ci.mobile>=0?c[ci.mobile].replace(/\D/g,"").slice(-10):"", addr:"",adults:2,children:0,idType:"Aadhaar",idNo:"",
+          room:ci.room>=0?c[ci.room]:"", rtype:"Standard AC", rate:ci.rate>=0?num(c[ci.rate]):0, nights:ci.nights>=0?Math.max(1,num(c[ci.nights])):1,
+          inDate:ci.ind>=0&&c[ci.ind]?c[ci.ind].slice(0,10):todayISO(), inTime:"", outDate:"",outTime:"",food:[],bfast:[],
+          adv:ci.adv>=0?num(c[ci.adv]):0, advMode:"Cash", balMode:"Cash", status:"out"});
+        added++;
+      }
+      save(); renderBookings(); toast("Imported "+added+" bookings ✓");
+    }catch(err){ toast("Import failed — check file format"); }
+    e.target.value="";
+  };
+  rd.readAsText(file);
+});
+
+/* ================= CLOUD SYNC (Google Apps Script) ================= */
+let pollTimer=null;
+function setSync(state,label){ $("syncDot").className="sync-dot "+state; $("syncLbl").textContent=label; }
+async function cloudPush(){
+  if(!S.settings.syncUrl) return;
+  try{
+    await fetch(S.settings.syncUrl,{method:"POST",body:JSON.stringify(S)});
+    setSync("ok","synced ✓");
+  }catch(e){ setSync("err","sync error"); }
+}
+async function cloudPull(){
+  if(!S.settings.syncUrl) return;
+  try{
+    const r=await fetch(S.settings.syncUrl+"?t="+Date.now());
+    const remote=await r.json();
+    if(remote && remote.updatedAt && remote.updatedAt > (S.updatedAt||0)){
+      const keepUrl=S.settings.syncUrl;
+      S=Object.assign({},DEFAULTS,remote);
+      S.settings=Object.assign({},DEFAULTS.settings,remote.settings||{});
+      S.settings.syncUrl=keepUrl;
+      save(false); renderAll();
+    }
+    setSync("ok","synced ✓");
+  }catch(e){ setSync("err","sync error"); }
+}
+function cloudStart(){
+  clearInterval(pollTimer);
+  if(!S.settings.syncUrl){ setSync("off","local only"); return; }
+  setSync("off","connecting…");
+  cloudPull();
+  pollTimer=setInterval(cloudPull, 15000);
+}
+
+/* ================= INIT ================= */
+function renderAll(){ renderBookings(); renderFinance(); renderContacts(); fillCats(); }
+load();
+fillCats();
+</script>
+</body>
+</html>
