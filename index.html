@@ -1071,7 +1071,7 @@ G("testSyncBtn").addEventListener("click", async()=>{
   if(!url){ res.textContent="⚠ Paste URL first"; res.style.color="var(--warn)"; return; }
   res.textContent="Testing…"; res.style.color="var(--muted)";
   try{
-    const r = await fetch(url+"?t="+Date.now(),{mode:"cors"});
+    const r = await fetch(url+"?t="+Date.now());
     const d = await r.json();
     if(d!==null){ res.textContent="✅ Connected! Cloud is working."; res.style.color="var(--ok)"; }
     else { res.textContent="⚠ Got empty response — check deployment"; res.style.color="var(--warn)"; }
@@ -1115,21 +1115,29 @@ async function cloudPush(){
   setSyncUI("pushing");
   try{
     const body=JSON.stringify(S);
-    const r=await fetch(S.settings.syncUrl,{method:"POST",mode:"cors",body});
-    const res=await r.json();
-    if(res&&res.ok!==false) setSyncUI("ok");
-    else setSyncUI("err");
+    // Use no-cors for POST — GAS redirects mean cors fails on mobile
+    // We fire-and-forget; pull confirms it saved
+    await fetch(S.settings.syncUrl, {
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain"},
+      body
+    });
+    setSyncUI("ok");
   }catch(e){
     setSyncUI("err");
   }
   _pushing=false;
+  // Pull shortly after to confirm data arrived
+  setTimeout(cloudPull, 2000);
 }
 
 async function cloudPull(){
   if(!S.settings.syncUrl) return;
   setSyncUI("pulling");
   try{
-    const r=await fetch(S.settings.syncUrl+"?t="+Date.now(),{mode:"cors"});
+    // Simple fetch — no mode:"cors" header needed for GET on GAS
+    const r=await fetch(S.settings.syncUrl+"?t="+Date.now());
     const d=await r.json();
     if(d && d.updatedAt && d.updatedAt > (S.updatedAt||0)){
       const keepUrl=S.settings.syncUrl;
